@@ -1,8 +1,6 @@
-*/.github
-
 # Aiken compilation artifacts
-*/artifacts/
+artifacts/
 # Aiken's project working directory
-*/build/
+build/
 # Aiken's default documentation export
-*/docs/
+docs/

@@ -1,8 +1,8 @@
-import { LOCAL_ENV } from "./constants/index.ts";
-import { setupLucid } from "./util.ts";
+import { KUPMIOS_ENV, LOCAL_ENV } from "../../common/constants/index.ts";
+import { setupLucid } from "../../common/util.ts";
 
 // Select wallet from private key
-const lucid = await setupLucid(LOCAL_ENV);
+const lucid = await setupLucid(KUPMIOS_ENV);
 
 // Select wallet from private key
 lucid.selectWalletFromPrivateKey(

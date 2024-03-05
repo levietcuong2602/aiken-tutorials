@@ -9,7 +9,6 @@ import {
   toHex,
 } from "https://deno.land/x/lucid@0.10.7/mod.ts";
 import * as cbor from "https://deno.land/x/cbor@v1.4.1/index.js";
-import blueprint from "../plutus.json" with { type: "json" };
 
 import { BLOCKFROST_ENV, LOCAL_ENV } from "./constants/index.ts";
 import { MAESTRO_ENV } from "./constants/index.ts";
@@ -66,13 +65,16 @@ export async function setupLucid(mode: string): Promise<Lucid> {
 
   const lucid = await Lucid.new(provider, "Preview");
   lucid.selectWalletFromPrivateKey(
-    await Deno.readTextFile("./credentials/me.sk"),
+    await Deno.readTextFile("../credentials/me.sk"),
   );
   return lucid;
 }
 
-export async function readValidator(title: string): Promise<SpendingValidator> {
-  const validator = blueprint.validators.find((e) => e.title = title);
+export async function readValidator(
+  blueprint: any,
+  title: string,
+): Promise<SpendingValidator> {
+  const validator = blueprint.validators.find((e: any) => e.title = title);
   if (!validator) {
     throw new Error(`Unable to field validator with title ${title}`);
   }
@@ -80,4 +82,32 @@ export async function readValidator(title: string): Promise<SpendingValidator> {
     type: "PlutusV2",
     script: toHex(cbor.encode(fromHex(validator.compiledCode))),
   };
+}
+
+export async function generateKeyPair(): Promise<[string, string]> {
+  const lucid = await Lucid.new(undefined, "Preview");
+  const privateKey = lucid.utils.generatePrivateKey();
+
+  const publicKey = await lucid
+    .selectWalletFromPrivateKey(privateKey)
+    .wallet.address();
+
+  return [publicKey, privateKey];
+}
+
+export function getCurrentTime() {
+  const current = new Date();
+  return current.getTime();
+}
+
+export function second() {
+  return 1000;
+}
+
+export function minute() {
+  return 60 * second();
+}
+
+export function hour() {
+  return 60 * minute();
 }

@@ -1,5 +1,5 @@
-import { setupLucid } from "./util.ts";
-import { KUPMIOS_ENV } from "./constants/index.ts";
+import { setupLucid } from "../../common/util.ts";
+import { KUPMIOS_ENV } from "../../common/constants/index.ts";
 
 const lucid = await setupLucid(KUPMIOS_ENV);
 

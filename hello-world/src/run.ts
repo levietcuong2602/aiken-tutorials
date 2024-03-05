@@ -9,12 +9,13 @@ import {
   toHex,
   TxHash,
 } from "https://deno.land/x/lucid@0.10.7/mod.ts";
-import { LOCAL_ENV } from "./constants/index.ts";
-import { setupLucid } from "./util.ts";
-import { readValidator } from "./util.ts";
+import { KUPMIOS_ENV, LOCAL_ENV } from "../../common/constants/index.ts";
+import { setupLucid } from "../../common/util.ts";
+import { readValidator } from "../../common/util.ts";
+import blueprint from "../plutus.json" with { type: "json" };
 
 async function run() {
-  const lucid = await setupLucid(LOCAL_ENV);
+  const lucid = await setupLucid(KUPMIOS_ENV);
 
   // address
   const walletAddress = await lucid.wallet.address();
@@ -33,19 +34,25 @@ async function run() {
   });
 
   // Create and instantiate validator --> script compile code by aiken of validator
-  const spendingValidator = await readValidator("hello_world.hello_world");
+  const spendingValidator = await readValidator(
+    blueprint,
+    "hello_world.hello_world",
+  );
+
+  // Lock Funds
+  // const datum = Data.to(new Constr(0, [String(publicKeyHash)]));
   // const txLockFund = await lockFunds(
   //   1000000n,
-  //   { into: spendingValidator },
+  //   { into: spendingValidator, owner: datum },
   //   lucid,
   // );
   // console.log({
   //   txLockFund,
   // });
 
-  // Unlock tx = b422b383b707e626d1137449b09446f6e9300780e628968907d7c5912afa1fbe
+  // Unlock tx = 1f8d5358001d490bb22ada6e6d59a49ded25cdec0e8d02b39b6ad221601b3f6d
   const utxo: OutRef = {
-    txHash: "b422b383b707e626d1137449b09446f6e9300780e628968907d7c5912afa1fbe",
+    txHash: "1f8d5358001d490bb22ada6e6d59a49ded25cdec0e8d02b39b6ad221601b3f6d",
     outputIndex: 0,
   };
   const redeemer = Data.to(new Constr(0, [fromText("Hello, World!")]));
@@ -57,7 +64,7 @@ async function run() {
 
 async function lockFunds(
   lovelace: bigint,
-  { into }: { into: SpendingValidator },
+  { into, owner }: { into: SpendingValidator; owner: string },
   lucid: Lucid,
 ): Promise<TxHash> {
   const contractAddress = lucid.utils.validatorToAddress(into);
@@ -67,11 +74,15 @@ async function lockFunds(
 
   const tx = await lucid
     .newTx()
-    .payToContract(contractAddress, { inline: Data.void() }, { lovelace })
+    .payToContract(contractAddress, { inline: owner }, { lovelace })
     .complete();
 
   const signedTx = await tx.sign().complete();
-  const txHash = signedTx.submit();
+  const txHash = await signedTx.submit();
+  console.log(`1 tADA locked into the contract at:
+    Tx ID: ${txHash}
+    Datum: ${owner}
+`);
   return txHash as unknown as TxHash;
 }
 
