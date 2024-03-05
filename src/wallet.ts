@@ -1,11 +1,13 @@
-import { KUPMIOS_ENV } from "./constants/index.ts";
-import { initialLucid } from "./util.ts";
+import { LOCAL_ENV } from "./constants/index.ts";
+import { setupLucid } from "./util.ts";
 
 // Select wallet from private key
-const lucid = await initialLucid(KUPMIOS_ENV);
+const lucid = await setupLucid(LOCAL_ENV);
 
 // Select wallet from private key
-lucid.selectWalletFromPrivateKey(await Deno.readTextFile("./me.sk"));
+lucid.selectWalletFromPrivateKey(
+  await Deno.readTextFile("./credentials/me.sk"),
+);
 
 // Query wallet
 const address = await lucid.wallet.address(); // Bech32 address

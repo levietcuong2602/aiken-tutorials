@@ -1,7 +1,7 @@
-import { initialLucid } from "./util.ts";
+import { setupLucid } from "./util.ts";
 import { KUPMIOS_ENV } from "./constants/index.ts";
 
-const lucid = await initialLucid(KUPMIOS_ENV);
+const lucid = await setupLucid(KUPMIOS_ENV);
 
 // query UTxOs
 const utxos = await lucid.provider.getUtxos(

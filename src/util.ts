@@ -11,10 +11,15 @@ import {
 import * as cbor from "https://deno.land/x/cbor@v1.4.1/index.js";
 import blueprint from "../plutus.json" with { type: "json" };
 
-import { BLOCKFROST_ENV } from "./constants/index.ts";
+import { BLOCKFROST_ENV, LOCAL_ENV } from "./constants/index.ts";
 import { MAESTRO_ENV } from "./constants/index.ts";
 
-export async function initialLucid(mode: string): Promise<Lucid> {
+/**
+ * setup lucid, select a wallet
+ * @param mode string
+ * @returns Lucid
+ */
+export async function setupLucid(mode: string): Promise<Lucid> {
   const signer = {
     sk: "ed25519_sk1apukqxxfyypexp5skl38tar2t0fvxcxcrh7drxshjv07w82gf5cs40wtz0",
     address: "addr_test1vqwz2gkgd7uqnsuhfsf8dmf5pv9axdmxdk52dyhpff00p6cc5azk7",
@@ -41,6 +46,14 @@ export async function initialLucid(mode: string): Promise<Lucid> {
         );
       }
       break;
+    case LOCAL_ENV:
+      {
+        const kupo = "http://localhost:1442";
+        const ogmios = "ws://localhost:1337";
+        console.log("Deploy in local", kupo, ogmios);
+        provider = new Kupmios(kupo, ogmios);
+      }
+      break;
     default:
       {
         const kupo = "http://192.168.10.136:1442";
@@ -52,6 +65,9 @@ export async function initialLucid(mode: string): Promise<Lucid> {
   }
 
   const lucid = await Lucid.new(provider, "Preview");
+  lucid.selectWalletFromPrivateKey(
+    await Deno.readTextFile("./credentials/me.sk"),
+  );
   return lucid;
 }
 
@@ -65,5 +81,3 @@ export async function readValidator(title: string): Promise<SpendingValidator> {
     script: toHex(cbor.encode(fromHex(validator.compiledCode))),
   };
 }
-
-export const test = "";
