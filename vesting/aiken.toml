@@ -1,0 +1,14 @@
+name = "aiken-tutorial/vesting"
+version = "0.0.0"
+license = "Apache-2.0"
+description = "Aiken contracts for project 'aiken-tutorial/vesting'"
+
+[repository]
+user = "aiken-tutorial"
+project = "vesting"
+platform = "github"
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "1.5.0"
+source = "github"
