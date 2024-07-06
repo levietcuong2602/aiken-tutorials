@@ -1,0 +1,69 @@
+{
+  "preamble": {
+    "title": "ibc/helloworld",
+    "description": "Aiken contracts for project 'ibc/helloworld'",
+    "version": "0.0.0",
+    "plutusVersion": "v2",
+    "compiler": {
+      "name": "Aiken",
+      "version": "v1.0.26-alpha+075668b"
+    },
+    "license": "Apache-2.0"
+  },
+  "validators": [
+    {
+      "title": "helloworld.hello_world",
+      "datum": {
+        "title": "datum",
+        "schema": {
+          "$ref": "#/definitions/helloworld~1Datum"
+        }
+      },
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/helloworld~1Redeemer"
+        }
+      },
+      "compiledCode": "59023e0100003232323232323232323223232232322533300a3253300c37326eb8c004c038dd50020992999806299980619b8f375c6004601e6ea80152210d48656c6c6f2c20576f726c64210014a22a6601a921166d7573745f7361795f68656c6c6f203f2046616c73650014a02a666018002294454cc0352401166d7573745f62655f7369676e6564203f2046616c73650014a02940cc88c8cc00400400c894ccc04c004528099299980819b8f375c602a00400829444cc00c00c004c054004dd618081808980898089808980898089808980898071baa3001300e37540046eb8c004c038dd5003918080008a4c2a660169211856616c696461746f722072657475726e65642066616c7365001365653330083370e900018051baa001132533300d001153300a00716132533300e3010002149854cc02c02058c94cccccc04400454cc02c0205854cc02c0205854cc02c0205854cc02c020584dd7000980700098059baa001153300900616533333300e001100115330080051615330080051615330080051615330080051653330053370e900018039baa001132533300a001153300700516132533300b300d002149854cc02001858c94cccccc03800454cc0200185854cc0200185854cc0200185854cc020018584dd7000980580098041baa001153300600416533333300b00110011533005003161533005003161533005003161533005003164911272656465656d65723a2052656465656d65720049010c646174756d3a20446174756d005734ae7155ceaab9e5573eae855d12ba41",
+      "hash": "5a8271e65f522bef0aa685b6e8bd65909612df64e5daa0921e91d15f"
+    }
+  ],
+  "definitions": {
+    "ByteArray": {
+      "dataType": "bytes"
+    },
+    "helloworld/Datum": {
+      "title": "Datum",
+      "anyOf": [
+        {
+          "title": "Datum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "owner",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        }
+      ]
+    },
+    "helloworld/Redeemer": {
+      "title": "Redeemer",
+      "anyOf": [
+        {
+          "title": "Redeemer",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "msg",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
