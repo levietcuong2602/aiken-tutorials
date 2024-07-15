@@ -19,9 +19,19 @@ export const setupLucid = async (): Promise<Lucid> => {
     new Kupmios("http://localhost:1442", "ws://localhost:1337"),
     "Preview",
   );
-  const DEPLOYER_SK =
-    "ed25519_sk1rvgjxs8sddhl46uqtv862s53vu4jf6lnk63rcn7f0qwzyq85wnlqgrsx42";
-  lucid.selectWalletFromPrivateKey(DEPLOYER_SK);
+  // const DEPLOYER_SK =
+  //   "ed25519_sk1rvgjxs8sddhl46uqtv862s53vu4jf6lnk63rcn7f0qwzyq85wnlqgrsx42";
+  // lucid.selectWalletFromPrivateKey(DEPLOYER_SK);
+  lucid.selectWalletFromSeed(
+    "direct language gravity into finger nurse rug rug spoon toddler music ability brisk wasp sound ball join guard pattern smooth lemon obscure raise royal",
+    {
+      addressType: "Base",
+    },
+  );
+
+  console.log({
+    wallet: lucid.wallet.address(),
+  });
 
   return lucid;
 };
@@ -34,3 +44,8 @@ export const readValidator = async (): Promise<SpendingValidator> => {
     script: toHex(cbor.encode(fromHex(validator.compiledCode))),
   };
 };
+
+export async function getWalletBalanceLovelace(lucid: Lucid) {
+  const utxos = await lucid.wallet.getUtxos()!;
+  return utxos.reduce((sum, utxo) => sum + utxo.assets.lovelace, 0n);
+}

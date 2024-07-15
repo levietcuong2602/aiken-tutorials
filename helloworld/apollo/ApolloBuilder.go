@@ -31,6 +31,7 @@ import (
 	"github.com/Salvionied/apollo/serialization/Withdrawal"
 	"github.com/Salvionied/apollo/txBuilding/Backend/Base"
 	"github.com/Salvionied/apollo/txBuilding/Backend/BlockFrostChainContext"
+	"github.com/Salvionied/apollo/txBuilding/Backend/OgmiosChainContext"
 	"github.com/Salvionied/apollo/txBuilding/Utils"
 	"github.com/Salvionied/cbor/v2"
 	"golang.org/x/exp/slices"
@@ -1349,7 +1350,7 @@ Returns:
 	error: an error if setWalletFromMnemonic fails.
 */
 
-func (a *Apollo) SetWalletFromMnemonic(mnemonic string) (*Apollo, error) {
+func (a *Apollo) SetWalletFromMnemonic(mnemonic string, network byte) (*Apollo, error) {
 	paymentPath := "m/1852'/1815'/0'/0/0"
 	stakingPath := "m/1852'/1815'/0'/2/0"
 	hdWall, err := HDWallet.NewHDWalletFromMnemonic(mnemonic, "")
@@ -1376,8 +1377,20 @@ func (a *Apollo) SetWalletFromMnemonic(mnemonic string) (*Apollo, error) {
 	stakeVerKey := Key.VerificationKey{Payload: stakeVerificationKey_bytes}
 	skh, _ := stakeVerKey.Hash()
 	vkh, _ := verificationKey.Hash()
+	addr := Address.Address{}
+	if network == 1 {
+		addr = Address.Address{StakingPart: skh[:], PaymentPart: vkh[:], Network: 1, AddressType: Address.KEY_KEY, HeaderByte: 0b00000001, Hrp: "addr"}
+	} else {
+		addr = Address.Address{
+			PaymentPart: vkh[:],
+			StakingPart: skh[:],
+			Network:     Address.TESTNET,
+			AddressType: Address.KEY_NONE,
+			HeaderByte:  (Address.KEY_NONE << 4) | 0,
+			Hrp:         "addr_test",
+		}
+	}
 
-	addr := Address.Address{StakingPart: skh[:], PaymentPart: vkh[:], Network: 1, AddressType: Address.KEY_KEY, HeaderByte: 0b00000001, Hrp: "addr"}
 	wallet := apollotypes.GenericWallet{SigningKey: signingKey, VerificationKey: verificationKey, Address: addr, StakeSigningKey: stakeSigningKey, StakeVerificationKey: stakeVerificationKey}
 	a.wallet = &wallet
 	return a, nil
@@ -1453,7 +1466,9 @@ func (b *Apollo) SetWalletAsChangeAddress() *Apollo {
 	}
 	switch b.Context.(type) {
 	case *BlockFrostChainContext.BlockFrostChainContext:
-
+		utxos := b.Context.Utxos(*b.wallet.GetAddress())
+		b = b.AddLoadedUTxOs(utxos...)
+	case *OgmiosChainContext.OgmiosChainContext:
 		utxos := b.Context.Utxos(*b.wallet.GetAddress())
 		b = b.AddLoadedUTxOs(utxos...)
 	default:

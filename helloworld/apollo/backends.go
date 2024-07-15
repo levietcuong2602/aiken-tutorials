@@ -4,10 +4,13 @@ import (
 	"fmt"
 
 	"github.com/Salvionied/apollo/constants"
+	"github.com/SundaeSwap-finance/kugo"
+	"github.com/SundaeSwap-finance/ogmigo/v6"
 
 	"github.com/Salvionied/apollo/txBuilding/Backend/BlockFrostChainContext"
 	"github.com/Salvionied/apollo/txBuilding/Backend/FixedChainContext"
 	"github.com/Salvionied/apollo/txBuilding/Backend/MaestroChainContext"
+	"github.com/Salvionied/apollo/txBuilding/Backend/OgmiosChainContext"
 )
 
 /*
@@ -90,4 +93,8 @@ func NewMaestroBackend(
 		projectId,
 	)
 
+}
+
+func NewOgmiosChainContext(ogmigoClient ogmigo.Client, kugoClient kugo.Client) OgmiosChainContext.OgmiosChainContext {
+	return OgmiosChainContext.NewOgmiosChainContext(ogmigoClient, kugoClient)
 }

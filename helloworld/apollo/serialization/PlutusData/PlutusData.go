@@ -1414,7 +1414,7 @@ type PlutusV2Script []byte
 func (ps *PlutusV2Script) ToAddress(stakingCredential []byte) Address.Address {
 	hash := PlutusScriptHash(ps)
 	if stakingCredential == nil {
-		return Address.Address{hash.Bytes(), nil, Address.MAINNET, Address.SCRIPT_NONE, 0b01110001, "addr"}
+		return Address.Address{hash.Bytes(), []byte{}, Address.TESTNET, Address.SCRIPT_NONE, (Address.SCRIPT_NONE << 4) | 0, "addr_test"}
 	} else {
 		return Address.Address{
 			PaymentPart: hash.Bytes(),

@@ -6,7 +6,11 @@ import {
   UTxO,
 } from "https://deno.land/x/lucid@0.8.3/mod.ts";
 import * as cbor from "https://deno.land/x/cbor@v1.4.1/index.js";
-import { readValidator, setupLucid } from "./utils.ts";
+import {
+  getWalletBalanceLovelace,
+  readValidator,
+  setupLucid,
+} from "./utils.ts";
 import { TDatumSchema, TRedeemerSchema } from "./types.ts";
 
 console.log(`Building a transaction to unlock the locked script UTxO`);
@@ -34,12 +38,16 @@ const txHash = await unlock(utxos, {
   redeemer,
 });
 
+const originalBalance = await getWalletBalanceLovelace(lucid);
+console.log(`Your wallet's balance before unlock is ${originalBalance}`);
 await lucid.awaitTx(txHash);
 
 console.log(`1 tADA unlocked from the contract
     Tx ID:    ${txHash}
     Redeemer: ${redeemer}
 `);
+const originalBalanceAfter = await getWalletBalanceLovelace(lucid);
+console.log(`Your wallet's balance after unlock is ${originalBalanceAfter}`);
 
 // Supporting functions
 async function unlock(

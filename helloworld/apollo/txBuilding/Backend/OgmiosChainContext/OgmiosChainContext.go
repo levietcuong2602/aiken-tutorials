@@ -236,7 +236,7 @@ func (occ *OgmiosChainContext) TxOuts(txHash string) []Base.Output {
 	chunk_size := 10
 	for more_utxos {
 		queries := make([]chainsync.TxInQuery, chunk_size)
-		for ix, _ := range queries {
+		for ix := range queries {
 			queries[ix] = chainsync.TxInQuery{
 				Transaction: chainsync.UtxoTxID{
 					ID: txHash,
@@ -384,28 +384,32 @@ type ExUnits struct {
 	Memory uint64 `json:"memory"`
 }
 
+type MinUtxoDepositConstant struct {
+	Ada Lovelace `json:"ada"`
+}
+
 type OgmiosProtocolParameters struct {
-	MinFeeConstant                  Lovelace `json:"minFeeConstant"`
-	MinFeeCoefficient               uint64   `json:"minFeeCoefficient"`
-	MaxBlockSize                    Bytes    `json:"maxBlockBodySize"`
-	MaxTxSize                       Bytes    `json:"maxTransactionSize"`
-	MaxBlockHeaderSize              Bytes    `json:"maxBlockHeaderSize"`
-	KeyDeposits                     Lovelace `json:"stakeCredentialDeposit"`
-	PoolDeposits                    Lovelace `json:"stakePoolDeposit"`
-	PoolInfluence                   string   `json:"stakePoolPledgeInfluence"`
-	MonetaryExpansion               string   `json:"monetaryExpansion"`
-	TreasuryExpansion               string   `json:"treasuryExpansion"`
-	ExtraEntropy                    string   `json:"extraEntropy"`
-	MaxValSize                      Bytes    `json:"maxValueSize"`
-	ScriptExecutionPrices           Prices   `json:"scriptExecutionPrices"`
-	MinUtxoDepositCoefficient       uint64   `json:"minUtxoDepositCoefficient"`
-	MinUtxoDepositConstant          uint64   `json:"minUtxoDepositConstant"`
-	MinStakePoolCost                Lovelace `json:"minStakePoolCost"`
-	MaxExecutionUnitsPerTransaction ExUnits  `json:"maxExecutionUnitsPerTransaction"`
-	MaxExecutionUnitsPerBlock       ExUnits  `json:"maxExecutionUnitsPerBlock"`
-	CollateralPercentage            uint64   `json:"collateralPercentage"`
-	MaxCollateralInputs             uint64   `json:"maxCollateralInputs"`
-	Version                         Version  `json:"version"`
+	MinFeeConstant                  Lovelace               `json:"minFeeConstant"`
+	MinFeeCoefficient               uint64                 `json:"minFeeCoefficient"`
+	MaxBlockSize                    Bytes                  `json:"maxBlockBodySize"`
+	MaxTxSize                       Bytes                  `json:"maxTransactionSize"`
+	MaxBlockHeaderSize              Bytes                  `json:"maxBlockHeaderSize"`
+	KeyDeposits                     Lovelace               `json:"stakeCredentialDeposit"`
+	PoolDeposits                    Lovelace               `json:"stakePoolDeposit"`
+	PoolInfluence                   string                 `json:"stakePoolPledgeInfluence"`
+	MonetaryExpansion               string                 `json:"monetaryExpansion"`
+	TreasuryExpansion               string                 `json:"treasuryExpansion"`
+	ExtraEntropy                    string                 `json:"extraEntropy"`
+	MaxValSize                      Bytes                  `json:"maxValueSize"`
+	ScriptExecutionPrices           Prices                 `json:"scriptExecutionPrices"`
+	MinUtxoDepositCoefficient       uint64                 `json:"minUtxoDepositCoefficient"`
+	MinUtxoDepositConstant          MinUtxoDepositConstant `json:"minUtxoDepositConstant"`
+	MinStakePoolCost                Lovelace               `json:"minStakePoolCost"`
+	MaxExecutionUnitsPerTransaction ExUnits                `json:"maxExecutionUnitsPerTransaction"`
+	MaxExecutionUnitsPerBlock       ExUnits                `json:"maxExecutionUnitsPerBlock"`
+	CollateralPercentage            uint64                 `json:"collateralPercentage"`
+	MaxCollateralInputs             uint64                 `json:"maxCollateralInputs"`
+	Version                         Version                `json:"version"`
 }
 
 func ratio(s string) float32 {
@@ -451,7 +455,7 @@ func (occ *OgmiosChainContext) LatestEpochParams() Base.ProtocolParameters {
 		// preview
 		DecentralizationParam: 0,
 		ExtraEntropy:          ogmiosParams.ExtraEntropy,
-		MinUtxo:               strconv.FormatUint(ogmiosParams.MinUtxoDepositConstant, 10),
+		MinUtxo:               strconv.FormatUint(ogmiosParams.MinUtxoDepositConstant.Ada.Lovelace, 10),
 		ProtocolMajorVersion:  int(ogmiosParams.Version.Major),
 		ProtocolMinorVersion:  int(ogmiosParams.Version.Minor),
 		MinPoolCost:           strconv.FormatUint(ogmiosParams.MinStakePoolCost.Lovelace, 10),
