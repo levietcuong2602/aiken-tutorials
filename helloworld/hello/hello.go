@@ -32,6 +32,7 @@ func Lock1Ada() {
 	apolloBE, _ = apolloBE.SetWalletFromMnemonic(SEED)
 	apolloBE = apolloBE.SetWalletAsChangeAddress()
 	publicKeyHash := apolloBE.GetWallet().PkeyHash()
+
 	fmt.Println(publicKeyHash)
 
 	txHash, err := lockAssets(ogmigoCtx, apolloBE)

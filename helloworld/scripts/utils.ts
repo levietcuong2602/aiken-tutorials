@@ -23,6 +23,13 @@ export const setupLucid = async (): Promise<Lucid> => {
     "ed25519_sk1rvgjxs8sddhl46uqtv862s53vu4jf6lnk63rcn7f0qwzyq85wnlqgrsx42";
   lucid.selectWalletFromPrivateKey(DEPLOYER_SK);
 
+  const privateKey = lucid.utils.generatePrivateKey();
+  await Deno.writeTextFile("key.sk", privateKey);
+  const address = await lucid
+    .selectWalletFromPrivateKey(privateKey)
+    .wallet.address();
+  await Deno.writeTextFile("key.addr", address);
+
   return lucid;
 };
 
