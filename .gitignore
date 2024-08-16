@@ -7,3 +7,6 @@
 build
 # Aiken's default documentation export
 */docs/
+
+*/.idea/
+.idea
